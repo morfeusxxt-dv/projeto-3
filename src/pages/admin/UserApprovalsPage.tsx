@@ -68,15 +68,25 @@ const UserApprovalsPage = () => {
   };
 
   const handleRejectUser = async (userId: string) => {
-    // For rejection, we can delete the user from auth.users, which will cascade delete the profile
-    const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+    try {
+      // Call the Edge Function to delete the user securely
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId },
+      });
 
-    if (authError) {
-      toast.error('Erro ao rejeitar usuário: ' + authError.message);
-      console.error('Error rejecting user:', authError.message);
-    } else {
+      if (error) {
+        throw error;
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       toast.success('Usuário rejeitado e removido com sucesso!');
       fetchPendingUsers(); // Refresh the list
+    } catch (error: any) {
+      toast.error('Erro ao rejeitar usuário: ' + error.message);
+      console.error('Error rejecting user via Edge Function:', error.message);
     }
   };
 
