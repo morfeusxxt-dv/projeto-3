@@ -1,37 +1,35 @@
-import { defineConfig } from "vite";
-import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
-export default defineConfig(({ mode }) => ({
-  base: "/",
-  server: {
-    host: "::",
-    port: 8080,
-  },
+export default defineConfig({
+  base: '/',
+  plugins: [react()],
   build: {
-    outDir: "dist",
-    chunkSizeWarningLimit: 1000,
+    outDir: 'dist',
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('@radix-ui')) return 'radix-ui';
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'react-vendor';
-            if (id.includes('@hookform') || id.includes('zod')) return 'form-vendor';
-            return 'vendor';
+            if (id.includes('@radix-ui')) return 'radix-ui'
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'react-vendor'
+            if (id.includes('@hookform') || id.includes('zod')) return 'form-vendor'
+            return 'vendor'
           }
-        }
+        },
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]'
       }
     }
   },
-  plugins: [dyadComponentTagger(), react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+      '@': path.resolve(__dirname, './src')
+    }
   },
-  define: {
-    'process.env.NODE_ENV': `"${mode}"`
+  server: {
+    port: 3000,
+    open: true
   }
-}));
+})
