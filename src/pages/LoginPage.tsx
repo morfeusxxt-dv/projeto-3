@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import AuthForm from '@/components/AuthForm';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';

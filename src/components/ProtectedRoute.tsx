@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate, Outlet } from 'react-router-dom';
 
@@ -17,6 +16,11 @@ const ProtectedRoute = () => {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If user exists but is not approved, redirect to pending approval page
+  if (!user.profile?.is_approved) {
+    return <Navigate to="/pending-approval" replace />;
   }
 
   return <Outlet />;

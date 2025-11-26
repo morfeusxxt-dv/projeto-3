@@ -2,7 +2,6 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import React from "react";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -16,7 +15,12 @@ const Index = () => {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    // If user is logged in, check approval status
+    if (user.profile?.is_approved) {
+      return <Navigate to="/dashboard" replace />;
+    } else {
+      return <Navigate to="/pending-approval" replace />;
+    }
   }
 
   return (

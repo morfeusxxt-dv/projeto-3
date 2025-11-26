@@ -1,10 +1,9 @@
 "use client";
 
-import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
-import { Home, Users, MessageSquare, DollarSign, LogOut } from 'lucide-react';
+import { Home, Users, MessageSquare, DollarSign, LogOut, UserCheck, Bot } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { MadeWithDyad } from './made-with-dyad';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -12,7 +11,7 @@ import { Menu } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MainLayout = () => {
-  const { signOut } = useAuth();
+  const { signOut, user, loading } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -45,11 +44,31 @@ const MainLayout = () => {
           <DollarSign className="mr-2 h-4 w-4" /> Pagamentos
         </Link>
       </Button>
+      {user?.profile?.is_admin && (
+        <Button variant="ghost" className="justify-start" asChild>
+          <Link to="/admin/user-approvals">
+            <UserCheck className="mr-2 h-4 w-4" /> Aprovar Usuários
+          </Link>
+        </Button>
+      )}
+      <Button variant="ghost" className="justify-start" asChild>
+        <Link to="/whatsapp-ai">
+          <Bot className="mr-2 h-4 w-4" /> WhatsApp AI
+        </Link>
+      </Button>
       <Button variant="ghost" className="justify-start text-red-500 hover:text-red-600" onClick={handleLogout}>
         <LogOut className="mr-2 h-4 w-4" /> Sair
       </Button>
     </nav>
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p>Carregando layout...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
