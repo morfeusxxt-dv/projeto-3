@@ -12,8 +12,9 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout";
 import PendingApprovalPage from "./pages/PendingApprovalPage";
-import UserApprovalsPage from "@/pages/admin/UserApprovalsPage"; // Fixed import path
+import UserApprovalsPage from "@/pages/admin/UserApprovalsPage";
 import WhatsappAI from "./pages/WhatsappAI";
+import ClientsPage from "./pages/ClientsPage"; // Importar a nova página
 
 const queryClient = new QueryClient();
 
@@ -35,9 +36,10 @@ const App = () => (
             <Route element={<ProtectedRoute />}>
               <Route element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/clients" element={<ClientsPage />} /> {/* Nova rota para clientes */}
                 <Route path="/admin/user-approvals" element={<UserApprovalsPage />} />
                 <Route path="/whatsapp-ai" element={<WhatsappAI />} />
-                {/* Future protected routes will go here, e.g., /clients, /messages, /payments */}
+                {/* Future protected routes will go here, e.g., /messages, /payments */}
               </Route>
             </Route>
 
