@@ -41,6 +41,6 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Ensure the trigger is owned by the supabase_admin role or a role with sufficient privileges
+-- Ensure the function is owned by the postgres role or a role with sufficient privileges
 ALTER FUNCTION public.handle_new_user() OWNER TO postgres;
-ALTER TRIGGER on_auth_user_created ON auth.users OWNER TO postgres;
+-- Removed: ALTER TRIGGER on_auth_user_created ON auth.users OWNER TO postgres; (This line was causing the error)
