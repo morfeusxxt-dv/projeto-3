@@ -100,23 +100,70 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
+    try {
+      // 1. Cria o usuário no Auth
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            full_name: email.split('@')[0], // Usa a parte antes do @ como nome
+            avatar_url: '' // URL de avatar vazia por padrão
+          },
+          emailRedirectTo: 'https://projeto-3-sandy.vercel.app/auth/confirm' // URL de produção para redirecionamento
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        // 2. Aguarda um pouco para o trigger do banco de dados processar
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // 3. Tenta buscar o perfil criado pelo trigger
+        let profile = await fetchUserProfile(data.user.id);
+        
+        // 4. Se o perfil não foi criado pelo trigger, tenta criar manualmente
+        if (!profile) {
+          console.warn('Perfil não encontrado, criando manualmente...');
+          const { data: newProfile, error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              { 
+                id: data.user.id, 
+                email: email,
+                is_approved: false,
+                is_admin: false
+              }
+            ])
+            .select()
+            .single();
+            
+          if (profileError) {
+            console.error('Erro ao criar perfil:', profileError);
+            throw new Error('Erro ao criar perfil do usuário');
+          }
+          
+          profile = newProfile;
+        }
+
+        setUser({ ...data.user, profile });
+        toast.success("Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.");
+        return { success: true };
+      }
+      
+      throw new Error('Erro desconhecido ao criar usuário');
+      
+    } catch (error: any) {
+      console.error('Erro no registro:', error);
+      const errorMessage = error.message || 'Erro ao criar conta. Tente novamente.';
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
       setLoading(false);
-      toast.error(error.message);
-      return { success: false, error: error.message };
     }
-    if (data.user) {
-      // The trigger `handle_new_user` should create the profile with is_approved: false
-      // We don't need to manually insert here.
-      // Just set the user with the pending profile.
-      const profile = await fetchUserProfile(data.user.id);
-      setUser({ ...data.user, profile });
-      toast.success("Cadastro realizado com sucesso! Sua conta está aguardando aprovação.");
-      return { success: true };
-    }
-    setLoading(false);
-    return { success: false, error: "Erro desconhecido ao cadastrar." };
   };
 
   const signOut = async () => {

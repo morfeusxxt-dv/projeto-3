@@ -15,6 +15,7 @@ import PendingApprovalPage from "./pages/PendingApprovalPage";
 import UserApprovalsPage from "@/pages/admin/UserApprovalsPage";
 import WhatsappAI from "./pages/WhatsappAI";
 import ClientsPage from "./pages/ClientsPage"; // Importar a nova página
+import EmailConfirmationPage from "./pages/auth/confirm";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/pending-approval" element={<PendingApprovalPage />} />
+            <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
