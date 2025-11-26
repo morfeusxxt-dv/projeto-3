@@ -14,11 +14,13 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom", "react-router-dom"],
-          ui: ["@radix-ui/*", "class-variance-authority", "clsx", "tailwind-merge"],
-          form: ["react-hook-form", "@hookform/resolvers", "zod"],
-          utils: ["date-fns", "sonner", "lucide-react"]
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('@radix-ui')) return 'radix-ui';
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'react-vendor';
+            if (id.includes('@hookform') || id.includes('zod')) return 'form-vendor';
+            return 'vendor';
+          }
         }
       }
     }
