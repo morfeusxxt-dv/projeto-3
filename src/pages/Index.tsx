@@ -26,7 +26,12 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4">
       <div className="text-center space-y-6">
-        {/* Removido: Título e descrição */}
+        <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-6xl">
+          Sistema de gestão
+        </h1>
+        <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">
+          Feito por Lyan
+        </p>
         <div className="flex gap-4 justify-center mt-6">
           <Button asChild size="lg">
             <Link to="/login">Entrar</Link>
